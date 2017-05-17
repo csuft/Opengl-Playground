@@ -1,0 +1,94 @@
+#include <iostream>
+#include <glew.h>  // should include before glfw3.h
+#include <glfw3.h>
+
+#include <glm/glm.hpp>
+using namespace glm;
+
+#include "shader.hpp"
+GLFWwindow* window;
+
+int main(void)
+{
+	// Initialize GLFW
+	if (!glfwInit())
+	{
+		std::cout << "Failed to initialize glfw." << std::endl;
+		getchar();
+		return -1;
+	}
+
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL", NULL, NULL);
+	if (window == nullptr)
+	{
+		std::cout << "Failed to create window for OpenGL." << std::endl;
+		glfwTerminate();
+		getchar();
+		return -2;
+	}
+	
+	glfwMakeContextCurrent(window);
+
+	// Initialize GLEW
+	glewExperimental = true;
+	if (glewInit() != GLEW_OK)
+	{
+		std::cerr << "Failed to initialize glew." << std::endl;
+		glfwTerminate();
+		getchar();
+		return -3;
+	}
+
+	// Prepare data for drawing.
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	static const GLfloat vertex_buffer_data[] = {
+		-1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f
+	};
+
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+	GLuint programID = LoadShaders("simple.vert", "simple.frag");
+
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glClearColor(0.0, 0.0, 0.4, 0.0);
+
+	do 
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		// do something drawing.
+		glUseProgram(programID);
+
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glDisableVertexAttribArray(0);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+		     glfwWindowShouldClose(window) == 0);
+
+	glfwTerminate();
+	getchar(); 
+
+	return 0;
+}

@@ -8,6 +8,12 @@ using namespace glm;
 #include "shader.hpp"
 GLFWwindow* window;
 
+void windowFreshCallback(GLFWwindow*);
+void windowSizeCallback(GLFWwindow*, int, int);
+void windowCloseCallback(GLFWwindow*);
+void windowFocusCallback(GLFWwindow*, int);
+void windowPosCallback(GLFWwindow*, int, int); 
+
 int main(void)
 {
 	// Initialize GLFW
@@ -20,7 +26,7 @@ int main(void)
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -35,6 +41,13 @@ int main(void)
 	}
 	
 	glfwMakeContextCurrent(window);
+
+	// set callbacks;
+	glfwSetWindowPosCallback(window, windowPosCallback);
+	glfwSetWindowRefreshCallback(window, windowFreshCallback);
+	glfwSetWindowFocusCallback(window, windowFocusCallback);
+	glfwSetWindowCloseCallback(window, windowCloseCallback);
+	glfwSetWindowSizeCallback(window, windowSizeCallback);
 
 	// Initialize GLEW
 	glewExperimental = true;
@@ -61,8 +74,8 @@ int main(void)
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
-
-	GLuint programID = LoadShaders("simple.vert", "simple.frag");
+	 
+	GLuint programID = LoadShaders("simple.vert", "simple.frag"/*, "simple.geom", true*/);
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0, 0.0, 0.4, 0.0);
@@ -91,4 +104,32 @@ int main(void)
 	getchar(); 
 
 	return 0;
+}
+
+void windowFreshCallback(GLFWwindow* window)
+{
+	std::cout << "Window Refreshed." << std::endl;
+}
+
+void windowSizeCallback(GLFWwindow* window, int width, int height)
+{
+	std::cout << "Window Resized." << std::endl;
+	std::cout << "Width:" << width << "Height:" << height;
+}
+
+void windowCloseCallback(GLFWwindow* window)
+{
+	std::cout << "Window Closed." << std::endl;
+}
+
+void windowFocusCallback(GLFWwindow* window, int getFocus)
+{
+	std::cout << "Windows Focused." << std::endl;
+	std::cout << "Focus state:" << getFocus << std::endl;
+}
+
+void windowPosCallback(GLFWwindow* window, int xPos, int yPos)
+{
+	std::cout << "Window Position." << std::endl;
+	std::cout << "X position:" << xPos << "Y position:" << yPos << std::endl;
 }

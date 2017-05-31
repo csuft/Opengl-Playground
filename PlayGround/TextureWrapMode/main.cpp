@@ -5,13 +5,14 @@
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/constants.hpp>
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
 #include "shader.hpp"
 GLFWwindow* window;
 
-void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned short>& indices); 
+void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned int>& indices); 
   
 int main(void)
 {
@@ -62,7 +63,7 @@ int main(void)
 	glBindVertexArray(VertexArrayID);
 
 	std::vector<GLfloat> vert_coords;
-	std::vector<unsigned short> vert_indices;
+	std::vector<unsigned int> vert_indices;
 	generateSphereGeometry(1.0f, vert_coords, vert_indices); 
 
 	// Vertices
@@ -75,7 +76,7 @@ int main(void)
 	GLuint indices_buffer;
 	glGenBuffers(1, &indices_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vert_indices.size()*sizeof(GLushort), vert_indices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vert_indices.size()*sizeof(GLuint), vert_indices.data(), GL_STATIC_DRAW);
 	 
 	GLuint programID = LoadShaders("simple.vert", "simple.frag"/*, "simple.geom", true*/);
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
@@ -99,8 +100,7 @@ int main(void)
 	do
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// do something drawing.
+		 
 		glUseProgram(programID);  
 		
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
@@ -109,15 +109,15 @@ int main(void)
 		glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); 
 
-		//glDrawElements(GL_TRIANGLES, vert_indices.size(), GL_UNSIGNED_SHORT, vert_indices.data());  
-		glDrawArrays(GL_LINE_STRIP, 0, vert_coords.size());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
+		glDrawElements(GL_LINE_STRIP, vert_indices.size(), GL_UNSIGNED_INT, (void*)0);  
+		//glDrawArrays(GL_LINE_STRIP, 0, vert_coords.size());
 
 		glDisableVertexAttribArray(1); 
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(window) == 0);
+	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	glfwTerminate();
 	glBindVertexArray(0);
@@ -128,27 +128,26 @@ int main(void)
 	return 0;
 }
 
-void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned short>& indices)
+void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned int>& indices)
 {
-	static const float PI = 3.1415926f;
 	// 经度方向切割100段
 	const int VERTICAL_SLICE = 100;
-	float vertical_step = (float)(PI*2 / VERTICAL_SLICE);
+	float vertical_step = (float)(glm::two_pi<float>() / VERTICAL_SLICE);
 	// 纬度方向切割50段
 	const int HORIZONTAL_SLICE = 50;
-	float horizontal_step = (float)(PI / HORIZONTAL_SLICE);
+	float horizontal_step = (float)(glm::pi<float>() / HORIZONTAL_SLICE);
 	
 	unsigned int start_index = 0;
 	unsigned int current_index = 0;
 	// 纬度方向上将球体分割成50段，即切割成50个不同半径的同心圆
-	for (size_t i = 0; i < HORIZONTAL_SLICE; ++i)
+	for (size_t i = 0; i <= HORIZONTAL_SLICE; ++i)
 	{
 		start_index = current_index;
 		float vertical_angle = horizontal_step * i;
-		float z_coord = -radius * std::cos(vertical_angle);
+		float z_coord = radius * std::cos(vertical_angle);
 		float sub_radius = radius * std::sin(vertical_angle);
 		// 经度方向将球体切割成100段
-		for (size_t j = 0; j < VERTICAL_SLICE; j++)
+		for (size_t j = 0; j <= VERTICAL_SLICE; j++)
 		{
 			float horizontal_angle = vertical_step * j;
 			float x_coord = sub_radius * std::cos(horizontal_angle);

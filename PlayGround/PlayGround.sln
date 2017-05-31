@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayGround", "PlayGround\Pl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextureWrapMode", "TextureWrapMode\TextureWrapMode.vcxproj", "{C049469E-C2EE-4EB6-9BC2-E2C70360400A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateSphere", "CreateSphere\CreateSphere.vcxproj", "{6E57EECB-86C0-4C69-8554-9C35ED0CCDE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{C049469E-C2EE-4EB6-9BC2-E2C70360400A}.Debug|Win32.Build.0 = Debug|x64
 		{C049469E-C2EE-4EB6-9BC2-E2C70360400A}.Release|Win32.ActiveCfg = Release|Win32
 		{C049469E-C2EE-4EB6-9BC2-E2C70360400A}.Release|Win32.Build.0 = Release|Win32
+		{6E57EECB-86C0-4C69-8554-9C35ED0CCDE8}.Debug|Win32.ActiveCfg = Debug|x64
+		{6E57EECB-86C0-4C69-8554-9C35ED0CCDE8}.Debug|Win32.Build.0 = Debug|x64
+		{6E57EECB-86C0-4C69-8554-9C35ED0CCDE8}.Release|Win32.ActiveCfg = Release|Win32
+		{6E57EECB-86C0-4C69-8554-9C35ED0CCDE8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,13 @@
-#version 430 core
+#version 330 core
 
-layout(location=1) in vec3 vert_coords; 
+uniform mat4 MVP;
 
-out vec4 vert_out_color;
+layout(location=1) in vec3 vert_coords;
+
+out vec3 vert_out_color;
 
 void main()
 {
-	gl_Position = vec4(vert_coords, 1.0f);
-	vert_out_color = vec3(1.0f, 0.0f, 0.0f);
+	gl_Position = MVP * vec4(vert_coords, 1.0f);
+	vert_out_color = vec3(1.0f, 1.0f, 1.0f);
 }

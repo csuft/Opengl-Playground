@@ -84,11 +84,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\OpenGL\libraries\include;E:\OpenGL\libraries\include\GLEW;E:\OpenGL\libraries\include\GLFW;E:\OpenGL\Playground\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PROJECT_DIR)..\..\external\include;$(PROJECT_DIR)..\..\external\include\GLEW;$(PROJECT_DIR)..\..\external\include\GLFW;$(PROJECT_DIR)..\..\common;$(PROJECT_DIR)..\..\external\include\SOIL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\OpenGL\libraries\libs\glfw\glfw64\lib-vc2013;E:\OpenGL\libraries\libs\glew\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PROJECT_DIR)..\..\external\libs\glfw\glfw64\lib-vc2013;$(PROJECT_DIR)..\..\external\libs\glew\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

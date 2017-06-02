@@ -10,10 +10,11 @@
 using namespace glm;
 
 #include "shader.hpp"
+#include "controls.hpp"
 GLFWwindow* window;
 
-void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned int>& indices); 
-  
+void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, std::vector<GLfloat>& texcoords);
+
 int main(void)
 {
 	// Initialize GLFW
@@ -51,6 +52,7 @@ int main(void)
 		return -3;
 	}
 	 
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 	// Enable depth test
@@ -64,7 +66,8 @@ int main(void)
 
 	std::vector<GLfloat> vert_coords;
 	std::vector<unsigned int> vert_indices;
-	generateSphereGeometry(1.0f, vert_coords, vert_indices); 
+	std::vector<GLfloat> texcoords;
+	generateSphereGeometry(2.0f, vert_coords, vert_indices, texcoords); 
 
 	// Vertices
 	GLuint vert_buffer;
@@ -82,35 +85,30 @@ int main(void)
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
 	 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
 	glViewport(0, 0, 1024, 768);
-
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	// Camera matrix
-	glm::mat4 View = glm::lookAt(
-		glm::vec3(4, 3, -3), // Camera is at (4,3,-3), in World Space
-		glm::vec3(0, 0, 0), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model = glm::mat4(1.0f);
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP = Projection * View * Model; // Remember, matrix multiplication is the other way around
-
+	
+	glm::mat4 modelMat(1.0f);
+	glm::mat4 viewMat;
+	glm::mat4 projectionMat;
+	glm::mat4 MVP;
 	do
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		 
 		glUseProgram(programID);  
 		
+		computeMatricesFromInputs();
+		viewMat = getViewMatrix();
+		projectionMat = getProjectionMatrix();
+		MVP = projectionMat * viewMat * modelMat;
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
 
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); 
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);  
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
-		glDrawElements(GL_LINE_STRIP, vert_indices.size(), GL_UNSIGNED_INT, (void*)0);  
+		glDrawElements(GL_LINE_STRIP, vert_indices.size(), GL_UNSIGNED_INT, (void*)0); // we use index buffer, so set it to null.  
 		//glDrawArrays(GL_LINE_STRIP, 0, vert_coords.size());
 
 		glDisableVertexAttribArray(1); 
@@ -128,30 +126,30 @@ int main(void)
 	return 0;
 }
 
-void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vector<unsigned int>& indices)
+void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, std::vector<GLfloat>& texcoords)
 {
 	// 经度方向切割100段
-	const int VERTICAL_SLICE = 100;
-	float vertical_step = (float)(glm::two_pi<float>() / VERTICAL_SLICE);
+	const GLuint VERTICAL_SLICE = 100;
+	GLfloat vertical_step = (GLfloat)(glm::two_pi<GLfloat>() / VERTICAL_SLICE);
 	// 纬度方向切割50段
-	const int HORIZONTAL_SLICE = 50;
-	float horizontal_step = (float)(glm::pi<float>() / HORIZONTAL_SLICE);
+	const GLuint HORIZONTAL_SLICE = 50;
+	GLfloat horizontal_step = (GLfloat)(glm::pi<GLfloat>() / HORIZONTAL_SLICE);
 	
-	unsigned int start_index = 0;
-	unsigned int current_index = 0;
+	GLuint start_index = 0;
+	GLuint current_index = 0;
 	// 纬度方向上将球体分割成50段，即切割成50个不同半径的同心圆
 	for (size_t i = 0; i <= HORIZONTAL_SLICE; ++i)
 	{
 		start_index = current_index;
-		float vertical_angle = horizontal_step * i;
-		float z_coord = radius * std::cos(vertical_angle);
-		float sub_radius = radius * std::sin(vertical_angle);
+		GLfloat vertical_angle = horizontal_step * i;
+		GLfloat z_coord = radius * std::cos(vertical_angle);
+		GLfloat sub_radius = radius * std::sin(vertical_angle);
 		// 经度方向将球体切割成100段
 		for (size_t j = 0; j <= VERTICAL_SLICE; j++)
 		{
-			float horizontal_angle = vertical_step * j;
-			float x_coord = sub_radius * std::cos(horizontal_angle);
-			float y_coord = sub_radius * std::sin(horizontal_angle);
+			GLfloat horizontal_angle = vertical_step * j;
+			GLfloat x_coord = sub_radius * std::cos(horizontal_angle);
+			GLfloat y_coord = sub_radius * std::sin(horizontal_angle);
 
 			// 一圈结束了，起点和重点重合
 			if (j == VERTICAL_SLICE)
@@ -174,11 +172,11 @@ void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vec
 			if (i > 0 && j > 0)
 			{
 				// 相邻上一圈中的顶点索引
-				unsigned int bottom_ring_a = (VERTICAL_SLICE + 1)*i + j;
-				unsigned int bottom_ring_b = (VERTICAL_SLICE + 1)*i + j - 1;
+				GLuint bottom_ring_a = (VERTICAL_SLICE + 1)*i + j;
+				GLuint bottom_ring_b = (VERTICAL_SLICE + 1)*i + j - 1;
 				// 相邻下一圈中的顶点索引
-				unsigned int top_ring_a = (VERTICAL_SLICE + 1)*(i - 1) + j;
-				unsigned int top_ring_b = (VERTICAL_SLICE + 1)*(i - 1) + j - 1;
+				GLuint top_ring_a = (VERTICAL_SLICE + 1)*(i - 1) + j;
+				GLuint top_ring_b = (VERTICAL_SLICE + 1)*(i - 1) + j - 1;
 
 				// j == 1时，相邻上一圈收缩成一个点
 				if (j == 1)
@@ -206,6 +204,8 @@ void generateSphereGeometry(float radius, std::vector<float>& vertices, std::vec
 					indices.push_back(bottom_ring_b);
 				}
 			}
+			texcoords.push_back((GLfloat)j/VERTICAL_SLICE);
+			texcoords.push_back(1 - (GLfloat)i/HORIZONTAL_SLICE);
 		}
 	}
 } 

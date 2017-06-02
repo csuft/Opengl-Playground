@@ -21,12 +21,18 @@
     <ClCompile Include="..\..\common\shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\controls.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\shader.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\controls.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

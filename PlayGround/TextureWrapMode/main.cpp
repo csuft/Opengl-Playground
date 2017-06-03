@@ -139,7 +139,7 @@ int main(void)
 
 		// use indices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
-		glDrawElements(GL_LINE_STRIP, vert_indices.size(), GL_UNSIGNED_INT, (void*)0); // we use index buffer, so set it to null.  
+		glDrawElements(GL_TRIANGLES, vert_indices.size(), GL_UNSIGNED_INT, (void*)0); // we use index buffer, so set it to null.  
 		//glDrawArrays(GL_LINE_STRIP, 0, vert_coords.size());
 
 		glDisableVertexAttribArray(1); 
@@ -191,7 +191,7 @@ void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std:
 			}
 			else
 			{
-				// 上面在计算x, y, z坐标时将Y轴和Z轴调换了
+				// 上面在计算x, y, z坐标时坐标系+Z轴向上，+X轴指向屏幕外
 				// 因此在这里要调整坐标系为右手坐标系
 				vertices.push_back(x_coord);
 				vertices.push_back(z_coord);

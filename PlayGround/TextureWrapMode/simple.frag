@@ -5,7 +5,7 @@ in vec3 vert_out_color;
 
 out vec3 frag_color;
 
-uniform Sampler2D texSampler;
+uniform sampler2D texSampler;
 
 void main(void)
 {

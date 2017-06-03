@@ -60,8 +60,9 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
-
-	GLuint textureID = SOIL_load_OGL_texture("texture.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+	 
+	GLuint textureID = SOIL_load_OGL_texture("E:/OpenGL/Playground/PlayGround/TextureWrapMode/texture.jpg", 
+		                                     SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (textureID  == 0)
 	{
 		std::cout << "Failed to load OpenGL texture." << std::endl;
@@ -122,6 +123,8 @@ int main(void)
 		// bind texture unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glUniform1i(samplerID, 0);
 
 		// upload vertices

@@ -60,16 +60,7 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
-	 
-	GLuint textureID = SOIL_load_OGL_texture("E:/OpenGL/Playground/PlayGround/TextureWrapMode/texture.jpg", 
-		                                     SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	if (textureID  == 0)
-	{
-		std::cout << "Failed to load OpenGL texture." << std::endl;
-		glfwTerminate();
-		return -4;
-	}
-
+	   
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -91,15 +82,8 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vert_indices.size()*sizeof(GLuint), vert_indices.data(), GL_STATIC_DRAW);
 
-	// UVs
-	GLuint uv_buffer;
-	glGenBuffers(1, &uv_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-	glBufferData(GL_ARRAY_BUFFER, texcoords.size()*sizeof(GLfloat), texcoords.data(), GL_STATIC_DRAW);
-	 
 	GLuint programID = LoadShaders("simple.vert", "simple.frag"/*, "simple.geom", true*/);
-	GLuint mvpID = glGetUniformLocation(programID, "MVP");
-	GLuint samplerID = glGetUniformLocation(programID, "texSampler");
+	GLuint mvpID = glGetUniformLocation(programID, "MVP"); 
 	 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glViewport(0, 0, 1024, 768);
@@ -119,23 +103,11 @@ int main(void)
 		projectionMat = getProjectionMatrix();
 		MVP = projectionMat * viewMat * modelMat;
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
-
-		// bind texture unit 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glUniform1i(samplerID, 0);
-
+		  
 		// upload vertices
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);  
-
-		// upload uv coordinates
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		// use indices
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
@@ -213,26 +185,26 @@ void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std:
 				if (j == 1)
 				{
 					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_a);
 					indices.push_back(top_ring_b);
+					indices.push_back(bottom_ring_b);
 				}
 				// j == HORIZONTAL_SLICE时，相邻下一圈收缩成一个点
 				else if (j == HORIZONTAL_SLICE)
 				{
 					indices.push_back(bottom_ring_a);
+					indices.push_back(top_ring_a);
 					indices.push_back(top_ring_b);
-					indices.push_back(bottom_ring_b);
 				}
 				else
 				{
 					// 逆时钟方向连接顶点，每次连接成一个四边形
 					// 逆时钟方向避免三角形被背面剔除处理掉
 					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_a);
-					indices.push_back(top_ring_b);
-					indices.push_back(bottom_ring_a);
 					indices.push_back(top_ring_b);
 					indices.push_back(bottom_ring_b);
+					indices.push_back(bottom_ring_a);
+					indices.push_back(top_ring_a);
+					indices.push_back(top_ring_b);
 				}
 			}
 			texcoords.push_back((GLfloat)j/VERTICAL_SLICE);

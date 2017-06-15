@@ -208,33 +208,18 @@ void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std:
 				// 相邻下一圈中的顶点索引
 				GLuint top_ring_a = (VERTICAL_SLICE + 1)*(i - 1) + j;
 				GLuint top_ring_b = (VERTICAL_SLICE + 1)*(i - 1) + j - 1;
+				 
+				// 逆时钟方向避免三角形被背面剔除处理掉
+				indices.push_back(bottom_ring_a);
+				indices.push_back(top_ring_a);
+				indices.push_back(top_ring_b);
+				indices.push_back(bottom_ring_a);
+				indices.push_back(top_ring_b);
+				indices.push_back(bottom_ring_b);
+				
+			} 
 
-				// j == 1时，相邻上一圈收缩成一个点
-				if (j == 1)
-				{
-					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_a);
-					indices.push_back(top_ring_b);
-				}
-				// j == HORIZONTAL_SLICE时，相邻下一圈收缩成一个点
-				else if (j == HORIZONTAL_SLICE)
-				{
-					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_b);
-					indices.push_back(bottom_ring_b);
-				}
-				else
-				{
-					// 逆时钟方向连接顶点，每次连接成一个四边形
-					// 逆时钟方向避免三角形被背面剔除处理掉
-					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_a);
-					indices.push_back(top_ring_b);
-					indices.push_back(bottom_ring_a);
-					indices.push_back(top_ring_b);
-					indices.push_back(bottom_ring_b);
-				}
-			}
+
 			texcoords.push_back((GLfloat)j/VERTICAL_SLICE);
 			texcoords.push_back(1 - (GLfloat)i/HORIZONTAL_SLICE);
 		}

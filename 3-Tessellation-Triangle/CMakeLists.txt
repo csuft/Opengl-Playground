@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(1-Startup)
+project(3-tessellation-triangle)
 
 #########################################################
 # Linker options
@@ -15,27 +15,28 @@ set(SOURCES
     main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp)
-
+	
 set(RESOURCES
-    1-Startup.frag 
-	1-Startup.vert)
+   	3-tessellation-triangle.frag 
+	3-tessellation-triangle.vert
+	3-tessellation-triangle.tcs
+	3-tessellation-triangle.tes)
 	
 #####################################
 # include external headers
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include 
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW 
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW
-				   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL
-				   ${CMAKE_CURRENT_SOURCE_DIR}/../common)
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW 
+					${CMAKE_CURRENT_SOURCE_DIR}/../common)
+					
 # link externl libraries
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/lib
                  ${CMAKE_CURRENT_SOURCE_DIR}/../external/lib/glfw/lib-vc2015)
-
+				 
 # set variables
 set(ALL_LIBS 
-   glfw3.lib
-   glew32s.lib) 
+    glfw3.lib 
+	glew32s.lib ) 
 
 find_package(OpenGL REQUIRED)
 

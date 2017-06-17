@@ -32,7 +32,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
-	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL - Sphere Texture", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -97,7 +97,16 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
 	glBufferData(GL_ARRAY_BUFFER, texcoords.size()*sizeof(GLfloat), texcoords.data(), GL_STATIC_DRAW);
 	 
-	GLuint programID = LoadShaders("simple.vert", "simple.frag"/*, "simple.geom", true*/);
+	ShaderVector shaders;
+	shaders.push_back(std::make_pair<std::string, GLenum>("2-SphereTexture.vert", GL_VERTEX_SHADER));
+	shaders.push_back(std::make_pair<std::string, GLenum>("2-SphereTexture.frag", GL_FRAGMENT_SHADER));
+	GLuint programID = LoadAllShaders(shaders);
+	if (programID == 0)
+	{
+		glfwTerminate();
+		return -5;
+	}
+
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
 	GLuint samplerID = glGetUniformLocation(programID, "texSampler");
 	 

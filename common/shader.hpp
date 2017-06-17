@@ -1,6 +1,12 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path, const char* geometry_file_path = nullptr, bool useGS = false);
+#include <utility>
+#include <vector>
+#include <string>
+#include <glew.h>
+
+using ShaderVector = std::vector<std::pair<std::string, GLenum>>;
+GLuint LoadAllShaders(ShaderVector& shaders);
 
 #endif

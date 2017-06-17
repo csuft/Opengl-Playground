@@ -30,3 +30,4 @@ message(STATUS "Root folder: ${PROJECT_SOURCE_DIR}")
 # Demo projects
 add_subdirectory(1-Startup)
 add_subdirectory(2-SphereTexture)
+add_subdirectory(3-Tessellation-Triangle)

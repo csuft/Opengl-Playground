@@ -31,7 +31,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL - Startup", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -74,9 +74,16 @@ int main(void)
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
-	 
-	GLuint programID = LoadShaders("simple.vert", "simple.frag"/*, "simple.geom", true*/);
+	ShaderVector shaders;
+	shaders.push_back(std::make_pair<std::string, GLenum>("1-Startup.vert", GL_VERTEX_SHADER));
+	shaders.push_back(std::make_pair<std::string, GLenum>("1-Startup.frag", GL_FRAGMENT_SHADER));
 
+	GLuint programID = LoadAllShaders(shaders);
+	if (programID == 0)
+	{
+		glfwTerminate();
+		return -4;
+	}
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0, 0.0, 0.4, 0.0);
 

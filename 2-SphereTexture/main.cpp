@@ -61,7 +61,7 @@ int main(void)
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 	 
-	GLuint textureID = SOIL_load_OGL_texture("E:/OpenGL/Playground/PlayGround/TextureWrapMode/texture.jpg", 
+	GLuint textureID = SOIL_load_OGL_texture("texture.jpg", 
 		                                     SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (textureID  == 0)
 	{

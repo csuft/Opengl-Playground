@@ -1,4 +1,4 @@
-cmake_minimum_required(3.6)
+cmake_minimum_required(VERSION 3.6)
 project(OpenGL_Playground)
 
 #######################################################
@@ -24,11 +24,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 #########################################################
 # Output information
-message("Root folder: ${PROJECT_SOURCE_DIR}")
-
-#########################################################
-# External dependency project
-add_subdirectory(SOIL)
+message(STATUS "Root folder: ${PROJECT_SOURCE_DIR}")
 
 #########################################################
 # Demo projects

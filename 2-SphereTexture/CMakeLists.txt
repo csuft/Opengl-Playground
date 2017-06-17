@@ -1,4 +1,4 @@
-cmake_minimum_required(3.6)
+cmake_minimum_required(VERSION 3.6)
 
 project(2-SphereTexture)
 
@@ -13,40 +13,50 @@ add_definitions(
 # source files
 set(SOURCES 
     main.cpp
-	../common/shader.hpp
-	../common/shader.cpp
-	../common/controls.hpp
-	../common/controls.cpp
-	simple.frag
-	simple.geom
-	simple.vert)
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.cpp)
+	
+set(RESOURCES
+   	simple.frag 
+	simple.vert
+	texture.jpg)
 	
 #####################################
 # include external headers
-include_directories(../external/include)
-include_directories(../external/include/GLFW)
-include_directories(../external/include/GLEW)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW
+					${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL
+					${CMAKE_CURRENT_SOURCE_DIR}/../common)
+					
 # link externl libraries
-link_directories(../external/lib)
-link_directories(../external/lib/glfw/lib-vc2015)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/lib
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../external/lib/glfw/lib-vc2015)
+				 
 # set variables
-set(GLFW_LIB glfw3.lib)
-set(GLEW_LIB glew32.lib) 
+set(ALL_LIBS 
+    glfw3.lib 
+	glew32s.lib
+	SOIL.lib) 
 
 find_package(OpenGL REQUIRED)
 
 ######################################
 # Output
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${GLFW} ${GLEW} ${OPENGL_LIBRARY});
+target_link_libraries(${PROJECT_NAME} ${ALL_LIBS} ${OPENGL_LIBRARY})
 
 ######################################
 # Custom command
 if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
+
+foreach(RESOURCE_ITEM ${RESOURCES})
 add_custom_command(
    TARGET ${PROJECT_NAME} POST_BUILD
-   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/"
+   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_ITEM}" "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/" 
 )
-elseif (${CMAKE_GENERATOR} MATCHES "Xcode")
-# Do nothing
+endforeach(RESOURCE_ITEM)
+
 endif (NOT ${CMAKE_GENERATOR} MATCHES "Xcode")

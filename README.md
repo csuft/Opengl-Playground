@@ -1,17 +1,27 @@
 # Opengl-Playground
-This is my personal playground to learn OpenGL. 
 
-# Libraries
+This is my personal playground to learn OpenGL.
+
+## Dependency Libraries
+
 - glm (Mathematics library for OpenGL)
 - glfw (Window system related)
 - glew (OpenGL extensions wrangler)
 - SOIL (For texture loading)
 
-# Project List
-- PlayGround  
+## Project Description
+
+- 1-Startup
   Skeleton project to start.
-- TextureWrapMode  
+- 2-SphereTexture
   A project demonstrated texture usage.
 
-# License
-None
+## How to compile
+
+- First, you should install CMake as we use it to manage the whole project.
+- Then, generate compilation projects(such as Visual Studio on Windows, Xcode for macOS, Makefile for Unix based system).
+- Last but not least, compile the project and run all of them.
+
+## License
+
+[MIT License](https://mit-license.org/)

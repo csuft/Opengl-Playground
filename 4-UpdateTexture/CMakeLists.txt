@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(2-SphereTexture)
+project(4-update-texture)
 
 #########################################################
 # Linker options
@@ -15,22 +15,22 @@ set(SOURCES
     main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp)
 	
 set(RESOURCES
-   	2-SphereTexture.frag 
-	2-SphereTexture.vert
-	texture.jpg)
+   	4-update-texture.frag 
+	4-update-texture.vert
+	texture1.jpg
+	texture2.jpg
+	texture3.jpg)
 	
 #####################################
 # include external headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include
                     ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW
                     ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW
-					${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL
+					${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL					
 					${CMAKE_CURRENT_SOURCE_DIR}/../common)
 					
 # link externl libraries
@@ -40,7 +40,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/lib
 # set variables
 set(ALL_LIBS 
     glfw3.lib 
-	glew32s.lib
+	glew32s.lib 
 	SOIL.lib) 
 
 find_package(OpenGL REQUIRED)

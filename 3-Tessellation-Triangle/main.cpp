@@ -23,7 +23,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
-	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL - Tessellation Triangle", NULL, NULL);
+	window = glfwCreateWindow(800, 600, "PlayGround for OpenGL - Tessellation Triangle", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -44,7 +44,7 @@ int main(void)
 		return -3;
 	}
 	 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 
@@ -63,9 +63,9 @@ int main(void)
 		glfwTerminate();
 		return -4;
 	} 
+	// Tell OpenGL to draw only the outlines of the resulting triangle.
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-	glViewport(0, 0, 1024, 768);
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); 
 	
 	do
 	{

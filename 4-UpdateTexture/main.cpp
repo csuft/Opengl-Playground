@@ -121,6 +121,9 @@ int main(void)
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); 
 	glfwSetKeyCallback(window, key_callback);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 	glViewport(0, 0, 800, 600);
 
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");

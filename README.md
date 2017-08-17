@@ -25,3 +25,4 @@ This is my personal playground to learn OpenGL.
 ## License
 
 [MIT License](https://mit-license.org/)
+

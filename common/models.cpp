@@ -73,3 +73,37 @@ void generateSphereGeometry(GLfloat radius, std::vector<GLfloat>& vertices, std:
 		}
 	}
 } 
+
+void generatePlaneGeometry(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, std::vector<GLfloat>& texcoords)
+{
+	GLfloat vert[] = {
+		1.0f,  1.0f, 0.0f,    // 右上
+		1.0f,  -1.0f, 0.0f,   // 右下
+		-1.0f, -1.0f, 0.0f,    // 左下
+		-1.0f,  1.0f, 0.0f,    // 左上
+	};
+	for (int i = 0; i < 12; i++)
+	{
+		vertices.push_back(vert[i]);
+	}
+
+	GLfloat texs[] = {
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f
+	};
+	for (int i = 0; i < 8; ++i)
+	{
+		texcoords.push_back(texs[i]);
+	}
+
+	GLuint inds[] = {
+		0, 3, 2,
+		0, 2, 1
+	};
+	for (int i = 0; i < 6; i++)
+	{
+		indices.push_back(inds[i]);
+	}
+}

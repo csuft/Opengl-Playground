@@ -7,6 +7,7 @@ project(7-YUVShader)
 add_definitions(
     -DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
+	-DYUV420P
 )
 
 ####################################
@@ -19,11 +20,11 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp)
 	
 set(SHADERS
-   	${CMAKE_CURRENT_SOURCE_DIR}/7-YUVShader.frag 
-	${CMAKE_CURRENT_SOURCE_DIR}/7-YUVShader.vert 
-	${CMAKE_CURRENT_SOURCE_DIR}/images/914x558.nv12
-	${CMAKE_CURRENT_SOURCE_DIR}/images/914x558.nv21
-	${CMAKE_CURRENT_SOURCE_DIR}/images/914x558.yuv420p)
+   	7-shader.frag 
+	7-shader.vert 
+	images/914x558.nv12
+	images/914x558.nv21
+	images/914x558.yuv420p)
 	
 #####################################
 # include external headers
@@ -54,7 +55,7 @@ target_link_libraries(${PROJECT_NAME} ${ALL_LIBS} ${OPENGL_LIBRARY})
 # Custom command
 if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
 
-foreach(RESOURCE_ITEM ${RESOURCES})
+foreach(RESOURCE_ITEM ${SHADERS})
 add_custom_command(
    TARGET ${PROJECT_NAME} POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_ITEM}" "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/" 

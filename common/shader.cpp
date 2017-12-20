@@ -54,10 +54,10 @@ GLuint LoadAllShaders(ShaderVector& shaders)
 		else
 		{
 			std::cout << "Impossible to open " << shaderFile << ". Are you in the right directory ? Don't forget to read the FAQ !\n" << std::endl; 
-			return 0;
+			return -1;
 		}
 		
-		std::cout << "Compiling shader: " << std::endl;
+		std::cout << "Compiling shader... " << std::endl;
 		char const * shaderSourcePointer = shaderCode.c_str();
 		glShaderSource(shaderId, 1, &shaderSourcePointer , NULL);
 		glCompileShader(shaderId);
@@ -66,10 +66,10 @@ GLuint LoadAllShaders(ShaderVector& shaders)
 		glGetShaderiv(shaderId, GL_COMPILE_STATUS, &Result);
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if ( InfoLogLength > 0 ){
-			std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
-			glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-			std::cout << VertexShaderErrorMessage[0] << std::endl;
-			return 0;
+			GLchar* VertexShaderErrorMessage = new GLchar(InfoLogLength+1);
+			glGetShaderInfoLog(shaderId, InfoLogLength, NULL, VertexShaderErrorMessage);
+			std::cout << VertexShaderErrorMessage << std::endl;
+			return -1;
 		}
 		 
 		glAttachShader(programID, shaderId); 
@@ -83,10 +83,10 @@ GLuint LoadAllShaders(ShaderVector& shaders)
 	glGetProgramiv(programID, GL_LINK_STATUS, &Result);
 	glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if ( InfoLogLength > 0 ){
-		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
-		glGetProgramInfoLog(programID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		std::cout << ProgramErrorMessage[0] << std::endl;
-		return 0;
+		GLchar* ProgramErrorMessage = new GLchar(InfoLogLength + 1);
+		glGetProgramInfoLog(programID, InfoLogLength, NULL, ProgramErrorMessage);
+		std::cout << ProgramErrorMessage << std::endl;
+		return -1;
 	}
 
 	std::cout << "Succeed to link program." << std::endl;

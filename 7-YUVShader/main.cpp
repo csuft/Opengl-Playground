@@ -12,7 +12,9 @@
 #include "shader.hpp" 
 
 GLFWwindow* window; 
-GLuint texIds;  
+GLuint texIds[3];  
+const int WIDTH = 914;
+const int HEIGHT = 558;
 
 int main(void)
 {
@@ -83,23 +85,58 @@ int main(void)
 	glBufferData(GL_ARRAY_BUFFER, texcoords.size()*sizeof(GLfloat), texcoords.data(), GL_STATIC_DRAW);
 	
 	ShaderVector shaders;
-	shaders.push_back(std::make_pair<std::string, GLenum>("7-YUVShader.vert", GL_VERTEX_SHADER));
-	shaders.push_back(std::make_pair<std::string, GLenum>("7-YUVShader.frag", GL_FRAGMENT_SHADER)); 
+	shaders.push_back(std::make_pair<std::string, GLenum>("7-shader.vert", GL_VERTEX_SHADER));
+	shaders.push_back(std::make_pair<std::string, GLenum>("7-shader.frag", GL_FRAGMENT_SHADER)); 
 	GLuint programID = LoadAllShaders(shaders);
-	if (programID == 0)
+	if (programID <= 0)
 	{
 		glfwTerminate();
-		return -4;
-	}  
-
-	texIds = SOIL_load_OGL_texture("input.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	if (texIds == 0)
-	{
-		std::cout << "Failed to load OpenGL texture." << std::endl;
-		glfwTerminate();
+		std::cout << "failed to load shaders." << std::endl;
 		return -4;
 	}
-	  
+	// read raw frame data 
+#ifdef YUV420P
+	FILE* file = fopen("914x558.yuv420p", "rb");
+#elif NV12
+	FILE* file = fopen("914x558.nv12", "rb");
+#elif NV21
+	FILE* file = fopen("914x558.nv21", "rb");
+#endif
+	if (file == nullptr)
+	{
+		std::cout << "file pointer is null" << std::endl;
+		glfwTerminate();
+		return -5;
+	}
+	char* rawData = new char[WIDTH*HEIGHT * 2];
+	fread(rawData, 1, WIDTH*HEIGHT * 2, file);
+	fclose(file);
+
+	// load all three planes as OpenGL texture.
+	glGenTextures(3, texIds);
+	glBindTexture(GL_TEXTURE_2D, texIds[0]); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glBindTexture(GL_TEXTURE_2D, texIds[1]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glBindTexture(GL_TEXTURE_2D, texIds[2]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	
+	if (rawData)
+	{
+		delete[] rawData;
+	} 
+
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);  
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -107,7 +144,9 @@ int main(void)
 	glViewport(0, 0, 1000, 1000);
 
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
-	GLuint samplerID = glGetUniformLocation(programID, "texSampler");
+	GLuint samplerYID = glGetUniformLocation(programID, "texSamplerY");
+	GLuint samplerUID = glGetUniformLocation(programID, "texSamplerU");
+	GLuint samplerVID = glGetUniformLocation(programID, "texSamplerV");
 
 	glm::mat4 modelMat(1.0f);
 	glm::mat4 viewMat;
@@ -131,12 +170,21 @@ int main(void)
 		MVP = projectionMat * viewMat * modelMat;
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
 		
-		// bind texture unit 0
+		// bind texture 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texIds);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glUniform1i(samplerID, 0);
+		glBindTexture(GL_TEXTURE_2D, texIds[0]); 
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH, HEIGHT, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData);
+		glUniform1i(samplerYID, 0);
+		
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texIds[1]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH / 2, HEIGHT / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT);
+		glUniform1i(samplerUID, 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, texIds[2]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH / 2, HEIGHT / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT * 5 / 4);
+		glUniform1i(samplerVID, 2);
 
 		// upload vertices
 		glEnableVertexAttribArray(1);
@@ -162,7 +210,7 @@ int main(void)
 	glDeleteBuffers(1, &vert_buffer);
 	glDeleteBuffers(1, &indices_buffer); 
 	glDeleteBuffers(1, &uv_buffer);
-	glDeleteTextures(1, &texIds);
+	glDeleteTextures(3, texIds);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteProgram(programID); 
 

@@ -32,7 +32,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
-	window = glfwCreateWindow(1000, 1000, "PlayGround for OpenGL - YUV Shader", NULL, NULL);
+	window = glfwCreateWindow(WIDTH, HEIGHT, "PlayGround for OpenGL - YUV Shader", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -53,7 +53,7 @@ int main(void)
 		return -3;
 	}
 	 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 
@@ -108,9 +108,10 @@ int main(void)
 		glfwTerminate();
 		return -5;
 	}
-	char* rawData = new char[WIDTH*HEIGHT * 2];
-	fread(rawData, 1, WIDTH*HEIGHT * 2, file);
+	char* rawData = new char[WIDTH*HEIGHT * 3/2];
+	size_t readSize = fread(rawData, 1, WIDTH*HEIGHT * 3/2, file);
 	fclose(file);
+	std::cout << "Read file size: " << readSize << std::endl;
 
 	// load all three planes as OpenGL texture.
 	glGenTextures(3, texIds);
@@ -131,17 +132,12 @@ int main(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
-	if (rawData)
-	{
-		delete[] rawData;
-	} 
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);  
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	glViewport(0, 0, 1000, 1000);
+	glViewport(0, 0, WIDTH, HEIGHT);
 
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
 	GLuint samplerYID = glGetUniformLocation(programID, "texSamplerY");
@@ -173,17 +169,17 @@ int main(void)
 		// bind texture 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texIds[0]); 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH, HEIGHT, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH, HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, rawData);
 		glUniform1i(samplerYID, 0);
 		
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texIds[1]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH / 2, HEIGHT / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT);
 		glUniform1i(samplerUID, 1);
 
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, texIds[2]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, WIDTH / 2, HEIGHT / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT * 5 / 4);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT * 5 / 4);
 		glUniform1i(samplerVID, 2);
 
 		// upload vertices
@@ -213,6 +209,10 @@ int main(void)
 	glDeleteTextures(3, texIds);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteProgram(programID); 
+	if (rawData)
+	{
+		delete[] rawData;
+	}
 
 	return 0;
 } 

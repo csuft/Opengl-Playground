@@ -21,7 +21,7 @@ set(SOURCES
 set(RESOURCES
    	6-plane-projection.frag 
 	6-plane-projection.vert
-	input.jpg )
+	input.png )
 	
 #####################################
 # include external headers

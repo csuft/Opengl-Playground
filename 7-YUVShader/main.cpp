@@ -10,6 +10,7 @@
 
 #include "models.hpp"
 #include "shader.hpp" 
+#include "controls.hpp"
 
 GLFWwindow* window; 
 GLuint texIds[3];  
@@ -32,7 +33,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
-	window = glfwCreateWindow(WIDTH, HEIGHT, "PlayGround for OpenGL - YUV Shader", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL - YUV Shader", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -53,7 +54,7 @@ int main(void)
 		return -3;
 	}
 	 
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 
@@ -116,18 +117,21 @@ int main(void)
 	// load all three planes as OpenGL texture.
 	glGenTextures(3, texIds);
 	glBindTexture(GL_TEXTURE_2D, texIds[0]); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH, HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, rawData);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glBindTexture(GL_TEXTURE_2D, texIds[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glBindTexture(GL_TEXTURE_2D, texIds[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT * 5 / 4);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -137,7 +141,7 @@ int main(void)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, 1024, 768);
 
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
 	GLuint samplerYID = glGetUniformLocation(programID, "texSamplerY");
@@ -155,31 +159,23 @@ int main(void)
 		 
 		glUseProgram(programID);  
 		
-		// Projection matrix : 45?Field of View, 1:1 ratio, display range : 0.1 unit <-> 100 units
-		projectionMat = glm::perspective(glm::radians(45.0f), 1.0f / 1.0f, 0.1f, 1000.0f);
-		// Camera matrix
-		viewMat = glm::lookAt(
-			glm::vec3(0, 0, 2),  // Camera is here
-			glm::vec3(0, 0, -1), // and looks here : at the same position, plus "direction"
-			glm::vec3(0, 1, 0)   // Head is up (set to 0,-1,0 to look upside-down)
-		);
+		computeMatricesFromInputs();
+		viewMat = getViewMatrix();
+		projectionMat = getProjectionMatrix();
 		MVP = projectionMat * viewMat * modelMat;
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
 		
 		// bind texture 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texIds[0]); 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH, HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, rawData);
 		glUniform1i(samplerYID, 0);
 		
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texIds[1]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT);
 		glUniform1i(samplerUID, 1);
 
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, texIds[2]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH / 2, HEIGHT / 2, 0, GL_RED, GL_UNSIGNED_BYTE, rawData + WIDTH*HEIGHT * 5 / 4);
 		glUniform1i(samplerVID, 2);
 
 		// upload vertices

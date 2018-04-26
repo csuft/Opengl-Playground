@@ -9,6 +9,6 @@ out vec2 vert_out_tex;
 
 void main()
 {
-	gl_Position = MVP * vec4(vert_coords, 1.0f); 
+	gl_Position = vec4(vert_coords, 1.0f); 
 	vert_out_tex = tex_coords;
 }

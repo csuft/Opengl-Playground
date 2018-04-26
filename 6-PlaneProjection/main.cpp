@@ -30,7 +30,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
-	window = glfwCreateWindow(1000, 1000, "PlayGround for OpenGL - Plane Texture", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "PlayGround for OpenGL - Plane Texture", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window for OpenGL." << std::endl;
@@ -92,7 +92,7 @@ int main(void)
 		return -4;
 	}  
 
-	texIds = SOIL_load_OGL_texture("input.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	texIds = SOIL_load_OGL_texture("input.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texIds == 0)
 	{
 		std::cout << "Failed to load OpenGL texture." << std::endl;
@@ -104,7 +104,7 @@ int main(void)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	glViewport(0, 0, 1000, 1000);
+	glViewport(30, 30, 800, 600);
 
 	GLuint mvpID = glGetUniformLocation(programID, "MVP");
 	GLuint samplerID = glGetUniformLocation(programID, "texSampler");
@@ -120,16 +120,16 @@ int main(void)
 		 
 		glUseProgram(programID);  
 		
-		// Projection matrix : 45?Field of View, 1:1 ratio, display range : 0.1 unit <-> 100 units
-		projectionMat = glm::perspective(glm::radians(45.0f), 1.0f / 1.0f, 0.1f, 1000.0f);
-		// Camera matrix
-		viewMat = glm::lookAt(
-			glm::vec3(0, 0, 2),  // Camera is here
-			glm::vec3(0, 0, -1), // and looks here : at the same position, plus "direction"
-			glm::vec3(0, 1, 0)   // Head is up (set to 0,-1,0 to look upside-down)
-		);
-		MVP = projectionMat * viewMat * modelMat;
-		glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
+		//// Projection matrix : 45?Field of View, 1:1 ratio, display range : 0.1 unit <-> 100 units
+		//projectionMat = glm::perspective(glm::radians(45.0f), 1.0f / 1.0f, 0.1f, 1000.0f);
+		//// Camera matrix
+		//viewMat = glm::lookAt(
+		//	glm::vec3(0, 0, 2),  // Camera is here
+		//	glm::vec3(0, 0, -1), // and looks here : at the same position, plus "direction"
+		//	glm::vec3(0, 1, 0)   // Head is up (set to 0,-1,0 to look upside-down)
+		//);
+		//MVP = projectionMat * viewMat * modelMat;
+		//glUniformMatrix4fv(mvpID, 1, GL_FALSE, glm::value_ptr(MVP));
 		
 		// bind texture unit 0
 		glActiveTexture(GL_TEXTURE0);

@@ -17,7 +17,9 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.cpp)
 	
 set(SHADERS
    	7-shader.frag 

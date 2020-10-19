@@ -1,5 +1,5 @@
 #include <iostream>
-#include <glew.h>  // should include before glfw3.h
+#include <glad/glad.h>  // should include before glfw3.h
 #include <glfw3.h>
 
 #include <glm/glm.hpp>
@@ -41,6 +41,14 @@ int main(void)
 	}
 	
 	glfwMakeContextCurrent(window);
+	// Initialize GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cerr << "Failed to initialize glad." << std::endl;
+		glfwTerminate();
+		getchar();
+		return -3;
+	}
 
 	// set callbacks;
 	glfwSetWindowPosCallback(window, windowPosCallback);
@@ -49,16 +57,7 @@ int main(void)
 	glfwSetWindowCloseCallback(window, windowCloseCallback);
 	glfwSetWindowSizeCallback(window, windowSizeCallback);
 
-	// Initialize GLEW
-	glewExperimental = true;
-	if (glewInit() != GLEW_OK)
-	{
-		std::cerr << "Failed to initialize glew." << std::endl;
-		glfwTerminate();
-		getchar();
-		return -3;
-	}
-
+	glViewport(0, 0, 600, 400);
 	// Prepare data for drawing.
 	GLuint vao;
 	glGenVertexArrays(1, &vao);

@@ -3,8 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <glew.h>
-
 // vs: vertex shader
 GLuint LoadAllShaders(ShaderVector& shaders)
 { 

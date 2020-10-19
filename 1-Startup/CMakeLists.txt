@@ -5,7 +5,6 @@ project(1-Startup)
 #########################################################
 # Linker options
 add_definitions(
-    -DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -14,7 +13,8 @@ add_definitions(
 set(SOURCES 
     main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/shader.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/glad.c)
 
 set(RESOURCES
     1-Startup.frag 
@@ -23,8 +23,7 @@ set(RESOURCES
 #####################################
 # include external headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include 
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW 
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW
 				   ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL
 				   ${CMAKE_CURRENT_SOURCE_DIR}/../common)
 
@@ -34,8 +33,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/lib
 
 # set variables
 set(ALL_LIBS 
-   glfw3.lib
-   glew32s.lib) 
+   glfw3.lib) 
 
 find_package(OpenGL REQUIRED)
 

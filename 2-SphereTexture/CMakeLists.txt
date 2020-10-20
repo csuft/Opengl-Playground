@@ -5,7 +5,6 @@ project(2-SphereTexture)
 #########################################################
 # Linker options
 add_definitions(
-    -DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
@@ -18,7 +17,8 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/controls.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/models.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../common/glad.c)
 	
 set(RESOURCES
    	2-SphereTexture.frag 
@@ -29,7 +29,6 @@ set(RESOURCES
 # include external headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/include
                     ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLFW
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../external/include/GLEW
 					${CMAKE_CURRENT_SOURCE_DIR}/../external/include/SOIL
 					${CMAKE_CURRENT_SOURCE_DIR}/../common)
 					
@@ -39,8 +38,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/lib
 				 
 # set variables
 set(ALL_LIBS 
-    glfw3.lib 
-	glew32s.lib
+    glfw3.lib
 	SOIL.lib) 
 
 find_package(OpenGL REQUIRED)

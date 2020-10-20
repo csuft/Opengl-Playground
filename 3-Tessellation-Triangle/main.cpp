@@ -1,5 +1,5 @@
 #include <iostream>
-#include <glew.h>  // should include before glfw3.h
+#include <glad/glad.h>  // should include before glfw3.h
 #include <glfw3.h>
 #include <vector>
 #include "shader.hpp" 
@@ -34,16 +34,14 @@ int main(void)
 
 	glfwMakeContextCurrent(window);
 
-	// Initialize GLEW
-	glewExperimental = true;
-	if (glewInit() != GLEW_OK)
+	// Initialize GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cerr << "Failed to initialize glew." << std::endl;
+		std::cerr << "Failed to initialize glad." << std::endl;
 		glfwTerminate();
 		getchar();
 		return -3;
 	}
-	 
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
